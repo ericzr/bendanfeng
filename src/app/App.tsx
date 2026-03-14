@@ -35,7 +35,7 @@ function RootLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/bendanfeng">
       <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<LandingPage />} />
