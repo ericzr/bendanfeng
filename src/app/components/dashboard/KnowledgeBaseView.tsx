@@ -21,6 +21,7 @@ import {
   Filter,
   Eye,
   Pencil,
+  Network,
 } from "lucide-react";
 import { agents, teams, KnowledgeBase } from "../../data/mock-data";
 import { motion } from "motion/react";
@@ -42,6 +43,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "../ui/dialog";
+import { KnowledgeGraph } from "../KnowledgeGraph";
 
 const typeConfig: Record<
   KnowledgeBase["type"],
@@ -469,6 +471,7 @@ function KBDetailView({
 }) {
   const type = typeConfig[kb.type];
   const status = statusConfig[kb.status];
+  const [showGraph, setShowGraph] = useState(false);
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -518,6 +521,15 @@ function KBDetailView({
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-white/10 text-neutral-400 bg-transparent hover:text-white"
+                  onClick={() => setShowGraph(true)}
+                >
+                  <Network className="h-3.5 w-3.5 mr-1.5" />
+                  <span className="hidden sm:inline">知识图谱</span>
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -635,6 +647,15 @@ function KBDetailView({
           </CardContent>
         </Card>
       </div>
+
+      {/* Knowledge Graph Overlay */}
+      {showGraph && (
+        <KnowledgeGraph
+          focusId={kb.id}
+          onClose={() => setShowGraph(false)}
+          onNavigate={() => {}}
+        />
+      )}
     </div>
   );
 }
