@@ -11,21 +11,15 @@ import {
   ChevronUp,
   Workflow,
   Send,
-  Clock,
-  Zap,
-  AlertTriangle,
-  ArrowUp,
-  Minus,
-  ArrowDown,
   Sparkles,
   X,
+  Circle,
 } from "lucide-react";
-import { managedTeams, teams, type ManagedTeam } from "../../data/mock-data";
+import { managedTeams, teams, dashboardTasks, type ManagedTeam } from "../../data/mock-data";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
-import { Input } from "../ui/input";
 import { WorkflowEditor } from "../WorkflowEditor";
 import { CreateTeamView } from "./CreateTeamView";
 
@@ -47,17 +41,13 @@ export function TeamManageView() {
   const [workflowEditorTeam, setWorkflowEditorTeam] = useState<{ name: string; workflow: { step: number; title: string; description: string }[] } | null>(null);
   const [showCreateTeam, setShowCreateTeam] = useState(false);
   const [assignTaskTeam, setAssignTaskTeam] = useState<typeof managedTeams[0] | null>(null);
-  const [taskDesc, setTaskDesc] = useState("");
-  const [taskPriority, setTaskPriority] = useState<"urgent" | "high" | "medium" | "low">("medium");
-  const [taskMode, setTaskMode] = useState<"now" | "schedule">("now");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [taskAssignees, setTaskAssignees] = useState<Set<string>>(new Set());
   const [taskSubmitted, setTaskSubmitted] = useState(false);
 
   const openAssignTask = (team: typeof managedTeams[0]) => {
     setAssignTaskTeam(team);
-    setTaskDesc("");
-    setTaskPriority("medium");
-    setTaskMode("now");
+    setSelectedTaskId(null);
     setTaskAssignees(new Set(team.members.map((m) => m.name)));
     setTaskSubmitted(false);
   };
@@ -260,7 +250,9 @@ export function TeamManageView() {
                     <CheckCircle2 className="h-12 w-12 text-green-400 mb-4" />
                   </motion.div>
                   <h3 className="text-white text-lg mb-1" style={{ fontWeight: 600 }}>任务已分配</h3>
-                  <p className="text-neutral-500 text-sm">已成功分配给 {assignTaskTeam.name}</p>
+                  <p className="text-neutral-500 text-sm">
+                    「{dashboardTasks.find((t) => t.id === selectedTaskId)?.name}」已分配给 {assignTaskTeam.name}
+                  </p>
                 </div>
               ) : (
                 <>
@@ -278,81 +270,47 @@ export function TeamManageView() {
                   </div>
 
                   <div className="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto">
-                    {/* Task Description */}
+                    {/* Select Task */}
                     <div>
-                      <label className="text-neutral-400 text-xs mb-2 block" style={{ fontWeight: 500 }}>任务描述</label>
-                      <textarea
-                        value={taskDesc}
-                        onChange={(e) => setTaskDesc(e.target.value)}
-                        placeholder="描述你希望团队完成的任务..."
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-neutral-600 resize-none focus:outline-none focus:border-white/20 transition-colors"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* Priority */}
-                    <div>
-                      <label className="text-neutral-400 text-xs mb-2 block" style={{ fontWeight: 500 }}>优先级</label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {([
-                          { key: "urgent" as const, label: "紧急", icon: <AlertTriangle className="h-3.5 w-3.5" />, color: "text-red-400 border-red-500/30 bg-red-500/10" },
-                          { key: "high" as const, label: "高", icon: <ArrowUp className="h-3.5 w-3.5" />, color: "text-orange-400 border-orange-500/30 bg-orange-500/10" },
-                          { key: "medium" as const, label: "中", icon: <Minus className="h-3.5 w-3.5" />, color: "text-blue-400 border-blue-500/30 bg-blue-500/10" },
-                          { key: "low" as const, label: "低", icon: <ArrowDown className="h-3.5 w-3.5" />, color: "text-neutral-400 border-white/10 bg-white/5" },
-                        ]).map((p) => (
-                          <button
-                            key={p.key}
-                            onClick={() => setTaskPriority(p.key)}
-                            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-all ${
-                              taskPriority === p.key ? p.color : "text-neutral-500 border-white/5 bg-transparent hover:border-white/10"
-                            }`}
-                          >
-                            {p.icon}
-                            {p.label}
-                          </button>
-                        ))}
+                      <label className="text-neutral-400 text-xs mb-2 block" style={{ fontWeight: 500 }}>选择任务</label>
+                      <div className="space-y-1.5">
+                        {dashboardTasks.map((task) => {
+                          const isSelected = selectedTaskId === task.id;
+                          const statusMap: Record<string, { label: string; color: string }> = {
+                            running: { label: "运行中", color: "text-green-400 border-green-500/20" },
+                            done: { label: "已完成", color: "text-neutral-400 border-white/10" },
+                            pending: { label: "等待中", color: "text-neutral-500 border-white/10" },
+                          };
+                          const st = statusMap[task.status] ?? statusMap.pending;
+                          return (
+                            <button
+                              key={task.id}
+                              onClick={() => setSelectedTaskId(task.id)}
+                              className={`flex items-center gap-3 w-full px-3 py-3 rounded-lg border text-sm transition-all ${
+                                isSelected
+                                  ? "border-white/20 bg-white/5 text-white"
+                                  : "border-white/5 text-neutral-400 hover:border-white/10 hover:text-neutral-300"
+                              }`}
+                            >
+                              <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                                isSelected ? "bg-white border-white" : "border-neutral-600"
+                              }`}>
+                                {isSelected && <CheckCircle2 className="h-3 w-3 text-black" />}
+                              </div>
+                              <div className="flex-1 text-left min-w-0">
+                                <div className="truncate" style={{ fontWeight: 500 }}>{task.name}</div>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-neutral-600 text-xs">执行者：{task.agent}</span>
+                                  <span className="text-neutral-600 text-xs">进度 {task.progress}%</span>
+                                </div>
+                              </div>
+                              <Badge variant="outline" className={`text-xs py-0 shrink-0 ${st.color}`}>
+                                {st.label}
+                              </Badge>
+                            </button>
+                          );
+                        })}
                       </div>
-                    </div>
-
-                    {/* Execution Mode */}
-                    <div>
-                      <label className="text-neutral-400 text-xs mb-2 block" style={{ fontWeight: 500 }}>执行方式</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => setTaskMode("now")}
-                          className={`flex items-center gap-2 px-4 py-3 rounded-lg border text-sm transition-all ${
-                            taskMode === "now"
-                              ? "text-white border-white/20 bg-white/5"
-                              : "text-neutral-500 border-white/5 hover:border-white/10"
-                          }`}
-                        >
-                          <Zap className="h-4 w-4" />
-                          <div className="text-left">
-                            <div style={{ fontWeight: 500 }}>立即执行</div>
-                            <div className="text-[10px] text-neutral-600">分配后自动开始</div>
-                          </div>
-                        </button>
-                        <button
-                          onClick={() => setTaskMode("schedule")}
-                          className={`flex items-center gap-2 px-4 py-3 rounded-lg border text-sm transition-all ${
-                            taskMode === "schedule"
-                              ? "text-white border-white/20 bg-white/5"
-                              : "text-neutral-500 border-white/5 hover:border-white/10"
-                          }`}
-                        >
-                          <Clock className="h-4 w-4" />
-                          <div className="text-left">
-                            <div style={{ fontWeight: 500 }}>定时执行</div>
-                            <div className="text-[10px] text-neutral-600">设定执行时间</div>
-                          </div>
-                        </button>
-                      </div>
-                      {taskMode === "schedule" && (
-                        <Input
-                          type="datetime-local"
-                          className="mt-2 bg-white/5 border-white/10 text-white text-sm"
-                        />
-                      )}
                     </div>
 
                     {/* Assignees */}
@@ -405,7 +363,7 @@ export function TeamManageView() {
                     </Button>
                     <Button
                       className="flex-1 bg-white text-black hover:bg-neutral-200"
-                      disabled={!taskDesc.trim() || taskAssignees.size === 0}
+                      disabled={!selectedTaskId || taskAssignees.size === 0}
                       onClick={handleSubmitTask}
                     >
                       <Send className="h-3.5 w-3.5 mr-1.5" />
