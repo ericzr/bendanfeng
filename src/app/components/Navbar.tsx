@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import logoImg from "@/assets/9029735ff07ec438509bff8d0513e653f98f5671.png";
@@ -8,6 +8,7 @@ import logoIconImg from "@/assets/c2e01a6770a6e47dddd52f9d4ea4d418103613e6.png";
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const links = [
     { to: "/", label: "首页" },
@@ -84,7 +85,7 @@ export function Navbar() {
               className="bg-white text-black hover:bg-neutral-200"
               onClick={() => {
                 setMobileOpen(false);
-                window.location.href = "/dashboard";
+                navigate("/dashboard");
               }}
             >
               控制台
@@ -125,7 +126,7 @@ export function Navbar() {
                 className="w-full bg-white text-black hover:bg-neutral-200"
                 onClick={() => {
                   setMobileOpen(false);
-                  window.location.href = "/dashboard";
+                  navigate("/dashboard");
                 }}
               >
                 控制台
