@@ -237,7 +237,7 @@ export function KnowledgeBaseView() {
               className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-neutral-600"
             />
           </div>
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setTypeFilter("all")}
               className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap transition-colors border ${
