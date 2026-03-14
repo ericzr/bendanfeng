@@ -399,47 +399,49 @@ export function DashboardPage() {
 
                   <div className="hidden md:flex flex-1 flex-col overflow-hidden">
                     <div className="p-4 border-b border-white/10">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h2 className="text-white" style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-                            {selectedTask.name}
-                          </h2>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-neutral-500 text-sm">执行者：{selectedTask.agent}</span>
-                            <span className="text-neutral-500 text-sm">开始时间：{selectedTask.startTime}</span>
-                            <Badge variant="outline" className={`text-xs py-0 ${statusConfig[selectedTask.status].color}`}>
-                              {statusConfig[selectedTask.status].label}
-                            </Badge>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h2 className="text-white truncate" style={{ fontSize: "1.25rem", fontWeight: 600 }}>
+                              {selectedTask.name}
+                            </h2>
+                            <div className="flex items-center gap-x-3 gap-y-1 mt-1 flex-wrap">
+                              <span className="text-neutral-500 text-sm">执行者：{selectedTask.agent}</span>
+                              <span className="text-neutral-500 text-sm">开始时间：{selectedTask.startTime}</span>
+                              <Badge variant="outline" className={`text-xs py-0 ${statusConfig[selectedTask.status].color}`}>
+                                {statusConfig[selectedTask.status].label}
+                              </Badge>
+                            </div>
                           </div>
+                          {selectedTask.status !== "done" && (
+                            <div className="flex gap-2 shrink-0">
+                              <Button variant="outline" size="sm" className="border-white/10 text-neutral-400 hover:text-white bg-transparent">
+                                暂停
+                              </Button>
+                              <Button variant="outline" size="sm" className="border-red-500/20 text-red-400 hover:bg-red-500/10 bg-transparent">
+                                终止
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                        {selectedTask.status !== "done" && (
-                          <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="border-white/10 text-neutral-400 hover:text-white bg-transparent">
-                              暂停
-                            </Button>
-                            <Button variant="outline" size="sm" className="border-red-500/20 text-red-400 hover:bg-red-500/10 bg-transparent">
-                              终止
-                            </Button>
+
+                        {selectedTask.status !== "pending" && (
+                          <div>
+                            <div className="flex justify-between text-xs text-neutral-500 mb-1">
+                              <span>执行进度</span>
+                              <span>{selectedTask.progress}%</span>
+                            </div>
+                            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                              <motion.div
+                                className="h-full bg-white rounded-full"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${selectedTask.progress}%` }}
+                                transition={{ duration: 0.8 }}
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
-
-                      {selectedTask.status !== "pending" && (
-                        <div className="mt-4">
-                          <div className="flex justify-between text-xs text-neutral-500 mb-1">
-                            <span>执行进度</span>
-                            <span>{selectedTask.progress}%</span>
-                          </div>
-                          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                            <motion.div
-                              className="h-full bg-white rounded-full"
-                              initial={{ width: 0 }}
-                              animate={{ width: `${selectedTask.progress}%` }}
-                              transition={{ duration: 0.8 }}
-                            />
-                          </div>
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-4">
