@@ -1,0 +1,1 @@
+import{j as e}from"./index-CwcRUwGK.js";function a({children:s}){return e.jsx("div",{className:"bg-black text-white min-h-screen pt-16",children:e.jsx("div",{className:"flex h-[calc(100vh-4rem)]",children:s})})}export{a as P};

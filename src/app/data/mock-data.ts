@@ -1,43 +1,6 @@
-export interface Agent {
-  id: string;
-  name: string;
-  role: string;
-  avatar: string;
-  tags: string[];
-  description: string;
-  category: string;
-  workflow: { step: number; title: string; description: string }[];
-  inputExample: string;
-  outputExample: string;
-  knowledgeBases?: KnowledgeBase[];
-}
+import type { Agent, KnowledgeBase, Team, DeployedAgent, ManagedTeam, LogEntry } from "../types";
 
-export interface KnowledgeBase {
-  id: string;
-  name: string;
-  description: string;
-  type: "document" | "qa" | "web" | "database" | "api" | "memory";
-  docCount: number;
-  size: string;
-  lastUpdated: string;
-  status: "active" | "indexing" | "inactive";
-}
-
-export interface Team {
-  id: string;
-  name: string;
-  description: string;
-  problem: string;
-  agentIds: string[];
-  icon: string;
-  benefits: string[];
-  useCases: string[];
-  teamWorkflow: { step: number; title: string; description: string; agentName: string }[];
-  stats: { label: string; value: string }[];
-  capabilities: { title: string; description: string; icon: string }[];
-  integrations: { name: string; icon: string; description: string; status: "available" | "coming-soon" }[];
-  knowledgeBases?: KnowledgeBase[];
-}
+export type { Agent, KnowledgeBase, Team, DeployedAgent, ManagedTeam, LogEntry };
 
 export const agents: Agent[] = [
   {
@@ -503,26 +466,6 @@ export const dashboardTasks = [
 
 // === Dashboard extended mock data ===
 
-export interface DeployedAgent {
-  id: string;
-  agentId: string;
-  name: string;
-  role: string;
-  status: "online" | "offline" | "busy" | "error";
-  deployedAt: string;
-  tasksCompleted: number;
-  tasksRunning: number;
-  successRate: number;
-  avgResponseTime: string;
-  lastActive: string;
-  config: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    autoRetry: boolean;
-  };
-}
-
 export const deployedAgents: DeployedAgent[] = [
   {
     id: "dep-1",
@@ -596,18 +539,6 @@ export const deployedAgents: DeployedAgent[] = [
   },
 ];
 
-export interface ManagedTeam {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  status: "active" | "paused" | "draft";
-  members: { name: string; role: "online" | "offline" | "busy" | "error" }[];
-  tasksToday: number;
-  tasksTotal: number;
-  createdAt: string;
-}
-
 export const managedTeams: ManagedTeam[] = [
   {
     id: "mt-1",
@@ -655,16 +586,6 @@ export const managedTeams: ManagedTeam[] = [
     createdAt: "2026-03-01",
   },
 ];
-
-export interface LogEntry {
-  id: string;
-  timestamp: string;
-  agent: string;
-  taskName: string;
-  level: "info" | "success" | "warning" | "error";
-  message: string;
-  duration?: string;
-}
 
 export const executionLogs: LogEntry[] = [
   { id: "log-1", timestamp: "2026-03-12 11:32:15", agent: "小研", taskName: "Q1市场调研报告", level: "info", message: "正在分析市场趋势...", duration: "进行中" },

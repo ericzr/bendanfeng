@@ -1,1 +1,0 @@
-import{j as t,a as d}from"./index-DloiNz0_.js";function s({className:a,...r}){return t.jsx("div",{"data-slot":"card",className:d("bg-card text-card-foreground flex flex-col gap-6 rounded-xl border",a),...r})}function e({className:a,...r}){return t.jsx("div",{"data-slot":"card-content",className:d("px-6 [&:last-child]:pb-6",a),...r})}export{s as C,e as a};

@@ -1,34 +1,6 @@
-// 应用数据 — 基于产品描述表
+import type { AppProductType, AppSuperCategory, AppItem, SkillCategory, SkillItem } from "../types";
 
-export type AppProductType =
-  | "tool"       // 工具型
-  | "analysis"   // 分析型
-  | "platform"   // 平台型
-  | "monitor"    // 监测型
-  | "service"    // 服务型
-  | "marketing"  // 营销型
-  | "specialist"; // 专业型
-
-export type AppSuperCategory = "skill" | "app";
-
-export interface AppItem {
-  id: string;
-  name: string;
-  description: string;
-  businessType: string;   // 业务形态
-  productType: AppProductType;
-  superCategory: AppSuperCategory;
-  icon: string;
-  tags: string[];
-  status: "available" | "installed" | "update";
-  rating: number;
-  ratingCount: number;
-  downloads: number;
-  lastUpdated: string;
-  features: string[];
-  author: string;
-  version: string;
-}
+export type { AppProductType, AppSuperCategory, AppItem, SkillCategory, SkillItem };
 
 export const appProductTypeConfig: Record<AppProductType, { label: string; color: string }> = {
   tool:       { label: "工具型", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
@@ -43,17 +15,6 @@ export const appProductTypeConfig: Record<AppProductType, { label: string; color
 export const appProductTypes: AppProductType[] = [
   "tool", "analysis", "platform", "monitor", "service", "marketing", "specialist",
 ];
-
-// 技能分类 (保留原有技能的分类)
-export type SkillCategory =
-  | "data-processing"
-  | "content-gen"
-  | "comm-integration"
-  | "web-scraping"
-  | "multimedia"
-  | "security"
-  | "ai-enhance"
-  | "dev-tools";
 
 export const skillCategoryConfig: Record<SkillCategory, { label: string; color: string }> = {
   "data-processing":   { label: "数据处理", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" },
@@ -71,26 +32,6 @@ export const skillCategories: SkillCategory[] = [
   "multimedia", "security", "ai-enhance", "dev-tools",
 ];
 
-export interface SkillItem {
-  id: string;
-  name: string;
-  description: string;
-  category: SkillCategory;
-  superCategory: "skill";
-  icon: string;
-  author: string;
-  version: string;
-  downloads: number;
-  rating: number;
-  ratingCount: number;
-  tags: string[];
-  status: "available" | "installed" | "update";
-  lastUpdated: string;
-  features: string[];
-  compatibility: string[];
-}
-
-// ========== 技能数据 ==========
 export const skillItems: SkillItem[] = [
   {
     id: "sk-1", name: "智能数据清洗", description: "自动检测并修复数据集中的缺失值、异常值和格式错误，支持 CSV/Excel/JSON 等多种格式。",
